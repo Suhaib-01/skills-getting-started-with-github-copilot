@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear loading message
       activitiesList.innerHTML = "";
 
+      // Reset select options to avoid duplicates
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
+
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
@@ -20,11 +23,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Build participants HTML
+        const participants = details.participants || [];
+        let participantsHTML = `<div class="participants"><strong>Participants (${participants.length}):</strong>`;
+        if (participants.length === 0) {
+          participantsHTML += '<p class="empty">No participants yet</p>';
+        } else {
+          participantsHTML += `<ul>${participants
+            .map((p) => `<li class="participant-item">${p}</li>`)
+            .join("")}</ul>`;
+        }
+        participantsHTML += `</div>`;
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          ${participantsHTML}
         `;
 
         activitiesList.appendChild(activityCard);
